@@ -1,15 +1,18 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const Main = (props: Props) => {
   return (
-    <div className='mx-auto flex gap-5 w-[50%] pt-14 justify-center'>
-      <Link className="p-2 border-2" href="/login">로그인</Link>
-      <Link className="p-2 border-2" href="/signup">회원가입</Link>
-      <Link className="p-2 border-2" href="/articles">게시글보러가기</Link>
+    <div className="mx-auto flex flex-col gap-5 justify-center items-center">
+      <Link
+        className="border-[1px] border-[#606067] hover:bg-[#38383c]  bg-[#27272a] p-2 rounded-2xl w-[25vw] text-center text-2xl font-bold min-w-[250px] max-w-[450px]"
+        href="/login"
+      >
+        시작하기
+      </Link>
     </div>
-  )
-}
-export default Main
+  );
+};
+export default Main;

@@ -1,6 +1,7 @@
 import React from "react";
 import Article from "../../components/Article";
 import Link from "next/link";
+import { PiNotePencilLight } from "react-icons/pi";
 
 type Props = {};
 
@@ -12,11 +13,16 @@ const Articles = (props: Props) => {
   ];
 
   return (
-    <div className="flex flex-col gap-5 mx-auto mt-[100px] w-[50%] p-[50px] border-2">
-      {articles.map((article) => {
-        return <Article key={article.id} articleID={article.id} />;
-      })}
-      <Link className="ml-auto border-2 p-2" href="/">홈으로</Link>
+    <div className="flex flex-col justify-center items-center gap-5 min-w-[300px] mx-[10vw] max-w-[70vw]">
+      <Link href="/post" className="ml-auto mt-[5px] text-[2rem] mr-2 text-[#7c98cd] hover:text-[#93b1e7] sm:text-[2.5rem]">
+        <PiNotePencilLight />
+      </Link>
+
+      <div className="flex flex-col gap-3 w-full">
+        {articles.map((article) => {
+          return <Article key={article.id} article={article} />;
+        })}
+      </div>
     </div>
   );
 };
