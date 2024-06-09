@@ -1,36 +1,46 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
-import { Formik, Form, Field, FormikHelpers } from "formik";
-import * as Yup from "yup";
+import React, {useState} from "react";
+import { Formik, Form, Field } from "formik";
+import { usePostData } from "@/api/hooks";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import instance from "@/api/axios";
 
 type Props = {};
 
 interface Values {
   title: string;
   content: string;
-  author: string;
 }
 
 const Post = (props: Props) => {
-  const style = "border-[1px] border-[#606067] rounded-[5px] bg-[#27272a] h-[4vh] font-bold text-[1.5rem] p-2 font-[sans-serif]";
+  const style =
+    "border-[1px] border-[#606067] rounded-[5px] bg-[#27272a] h-[4vh] font-bold text-[1.5rem] p-2 font-[sans-serif]";
+  const router = useRouter();
+
+  const handleSubmit = async (data: Values) => {
+    try {
+      await instance.post("/api/board", data);
+      router.push("/articles");
+    } catch (error) {
+      console.error("게시글 추가 중 에러 발생:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <Formik
-        initialValues={{ title: "", content: "", author: "" }}
-        validationSchema={Yup.object({
-          title: Yup.string().required("제목을 입력해주세요."),
-          content: Yup.string().required("내용을 입력해주세요."),
-        })}
-        onSubmit={(
-          values: Values,
-          { setSubmitting }: FormikHelpers<Values>
-        ) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(false);
-          }, 500);
+        initialValues={{ title: "", content: ""}}
+        onSubmit={async (data: Values, { setSubmitting }) => {
+          console.log(data);
+          if(data.title.length < 10) {
+            alert("제목은 10자 이상이어야 합니다.");
+            return;
+          }
+          await handleSubmit(data);
+          setSubmitting(false);
         }}
       >
         <Form>
@@ -42,7 +52,8 @@ const Post = (props: Props) => {
                   name="title"
                   type="text"
                   placeholder="글 제목을 입력해주세요."
-                  className={style}/>
+                  className={style}
+                />
                 <Field
                   id="content"
                   name="content"
@@ -53,10 +64,16 @@ const Post = (props: Props) => {
                 />
               </div>
               <div className="flex gap-2 ml-auto">
-                <button className="border-[1px] border-[#606067] hover:bg-[#38383c]  bg-[#27272a] p-2 rounded-[5px]" type="submit">
+                <button
+                  className="border-[1px] border-[#606067] hover:bg-[#38383c]  bg-[#27272a] p-2 rounded-[5px]"
+                  type="submit"
+                >
                   게시하기
                 </button>
-                <Link href="/articles" className="border-[1px] border-[#606067] hover:bg-[#38383c]  bg-[#27272a] p-2 rounded-[5px]">
+                <Link
+                  href="/articles"
+                  className="border-[1px] border-[#606067] hover:bg-[#38383c]  bg-[#27272a] p-2 rounded-[5px]"
+                >
                   취소
                 </Link>
               </div>

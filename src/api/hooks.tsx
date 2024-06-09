@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
+import instance from "./axios";
 
 type FetchDataResponse<T> = {
   data: T | null;
@@ -17,7 +18,8 @@ export const useFetchData = <T,>(url: string): FetchDataResponse<T> => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<T>(url);
+        console.log(url);
+        const response = await instance.get<T>(url);
         setData(response.data);
       } catch (e) {
         setError(e as AxiosError);
@@ -27,13 +29,12 @@ export const useFetchData = <T,>(url: string): FetchDataResponse<T> => {
     };
     fetchData();
   }, [url]);
-  console.log(data, loading, error)
   return { data, loading, error };
 };
 
 export const usePostData = <T,>(url: string, data: object) => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<AxiosError | null>(null);
+  const [error, setError] = useState<AxiosError | null>(null); 
 
   const postData = async () => {
     try {
@@ -45,6 +46,5 @@ export const usePostData = <T,>(url: string, data: object) => {
     }
   };
   postData();
-
   return { loading, error };
 };
