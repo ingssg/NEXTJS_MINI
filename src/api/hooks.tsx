@@ -27,7 +27,7 @@ export const useFetchData = <T,>(url: string): FetchDataResponse<T> => {
     };
     fetchData();
   }, [url]);
-
+  console.log(data, loading, error)
   return { data, loading, error };
 };
 

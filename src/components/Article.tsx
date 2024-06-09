@@ -9,7 +9,7 @@ type Props = {
   article: {
     id: number;
     title: string;
-    body: string;
+    content: string;
   };
 };
 
@@ -18,7 +18,7 @@ const Article = (props: Props) => {
 
   const [commentCount, setCommentCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
-  
+
 
   const goToArticle = () => {
     router.push(`/articles/${props.article.id}`);

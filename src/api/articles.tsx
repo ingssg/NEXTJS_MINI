@@ -1,17 +1,26 @@
+'use client';
 import { useFetchData, usePostData } from "./hooks";
 
-export const getArticles = async () => {
-  const { data, loading, error } = useFetchData("/board");
+type Articles = {
+  id: string;
+  title: string;
+  date: string;
+};
+
+export const getArticles = () => {
+  console.log(123);
+  const { data, loading, error } = useFetchData<Articles[]>("/board");
+  console.log(data,loading, error)
   if (loading) {
-    return <div>로딩 중입니다.</div>;
+    return "loading";
   }
   if (error) {
-    return <div>에러가 발생했습니다.</div>;
+    return "error";
   }
   return data;
 };
 
-export const postArticle = async (data: object) => {
+export const postArticle = (data: object) => {
   const { loading, error } = usePostData("/board", data);
   if (loading) {
     return <div>로딩 중입니다.</div>;
