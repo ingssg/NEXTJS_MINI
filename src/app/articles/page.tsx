@@ -1,11 +1,11 @@
 'use client';
 
-import React, {useState} from "react";
+import React from "react";
 import Article from "../../components/Article";
 import Link from "next/link";
 import { PiNotePencilLight } from "react-icons/pi";
-import { getArticles } from "@/api/articles";
 import { useFetchData } from "@/api/hooks";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
@@ -22,13 +22,14 @@ type Articles = {
 };
 
 const Articles = (props: Props) => {
-
+  const router = useRouter();
   const { data, loading, error } = useFetchData<Articles[]>("/board");
   if(loading) {
     return <div>로딩 중입니다.</div>
   }
   if(error) {
-    return <div>에러가 발생했습니다.</div>
+    router.push("/error");
+    return; 
   }
 
   const articles = data;
