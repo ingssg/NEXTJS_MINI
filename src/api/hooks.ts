@@ -18,7 +18,6 @@ export const useFetchData = <T,>(url: string): FetchDataResponse<T> => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(url);
         const response = await instance.get<T>(url);
         setData(response.data);
       } catch (e) {

@@ -6,6 +6,7 @@ import { FaRegListAlt } from "react-icons/fa";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import { useFetchData } from "@/api/hooks";
+import instance from "@/api/axios";
 
 type Props = {
   params: {
@@ -20,20 +21,19 @@ type Article = {
   content: string;
 };
 
-const handleDelete = (e: MouseEvent) => {
-  console.log("Delete");
-  e.stopPropagation();
-};
 
-const handleEdit = (e: MouseEvent) => {
-  console.log("Edit");
-  e.stopPropagation();
-};
 
 const Article = (props: Props) => {
   const _id = props.params.articleID;
   const router = useRouter();
   const { data, loading, error } = useFetchData<Article>(`/api/board/${_id}`);
+  const handleEdit = () => {
+    router.push(`/articles/edit/${_id}`)
+  };
+  const handleDelete = () => {
+    instance.delete(`/api/board/${_id}`);
+    router.push("/articles")
+  };
   if (loading) {
     return <span className="loader"></span>;
   }
@@ -67,7 +67,7 @@ const Article = (props: Props) => {
           </p>
           <div className="flex justify-between">
             <span className="font-normal text-[12px] sm:text-[16px]">
-              작성자: {articles.nickname} | 작성시간: {parsingTime(articles.date)}
+              {parsingTime(articles.date)}
             </span>
             <div className="flex gap-2 sm:gap-4 justify-end w-[20vw]">
               <Button className="text-[#7c98cd] hover:text-[#93b1e7] text-[12px] sm:text-[16px]" onClick={handleEdit}>수정</Button>
@@ -75,7 +75,7 @@ const Article = (props: Props) => {
             </div>
           </div>
         </div>
-        <div className="border-[#606067] bg-[#27272a] p-5 rounded-b-2xl font-nanum relative w-full border-[1px]">
+        <div className="border-[#606067] bg-[#27272a] p-5 rounded-b-2xl font-nanum relative w-full border-[1px] break-all">
           {articles.content}
         </div>
       </div>

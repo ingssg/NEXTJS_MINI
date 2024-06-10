@@ -3,13 +3,44 @@
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
+import instance from "@/api/axios";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Values {
   email: string;
   password: string;
 }
 
+
 const Login = () => {
+  const Swal = require("sweetalert2");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const onSubmit = (values: Values) => {
+    instance.post("/api/login", values)
+      .then((res) => {
+        router.push("/articles");
+      })
+      .catch(() => {
+        Swal.fire({
+          title: 'Error!',
+          text: '유저 정보가 일치하지 않습니다.',
+          icon: 'error',
+          confirmButtonText: '확인',
+          background: '#27272a',
+          color: '#ffffff'
+        });
+      });
+  }
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  }
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }
+
   const validationSchema = Yup.object({
     email: Yup.string()
       .matches(/^[^@\s]+@[^@\s]+\.[^@\s]+$/, "올바른 이메일 형식이 아닙니다.")
@@ -25,8 +56,8 @@ const Login = () => {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
-          onSubmit={(values: Values) => {
-            alert("submitted!");
+          onSubmit={() => {
+            onSubmit({email: email, password: password});
           }}
         >
             <Form>
@@ -36,8 +67,9 @@ const Login = () => {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder=" EMAIL"
-                    className="text-black rounded-[5px] font-[sans-serif] pl-1"
+                    placeholder="EMAIL"
+                    className="text-black rounded-[5px] font-[sans-serif] pl-2"
+                    onKeyUp={handleEmailChange}
                   />
                   <ErrorMessage name="email" component="span" className="text-red-500"/>
                 </div>
@@ -46,8 +78,9 @@ const Login = () => {
                     id="password"
                     name="password"
                     type="password"
-                    placeholder=" PASSWORD"
-                    className="text-black rounded-[5px] font-[sans-serif] pl-1"
+                    placeholder="PASSWORD"
+                    className="text-black rounded-[5px] font-[sans-serif] pl-2"
+                    onKeyUp={handlePasswordChange}
                   />
                   <ErrorMessage name="password" component="span" className="text-red-500"/>
                 </div>

@@ -13,7 +13,6 @@ type article = {
   _id: number;
   title: string;
   date: string;
-  nickname: string;
 };
 
 type Articles = {
@@ -32,10 +31,23 @@ const Articles = (props: Props) => {
     return;
   }
   if (!data || !data.board || data.board.length === 0) {
-    return <div>게시글이 없습니다.</div>;
+    return (
+      <div className="flex flex-col gap-3 items-center">
+
+        <Link
+          href="/post"
+          className="mr-2 text-[#7c98cd] hover:text-[#93b1e7]"
+        >
+          <div className="flex gap-2 text-[20px] sm:text-[24px]">
+            <PiNotePencilLight className="mt-[8px]" />
+            <p>글 쓰러 가기</p>
+          </div>
+        </Link>
+        <p className="mt-4 text-[20px] sm:text-[24px]">게시글이 없습니다.</p>
+      </div>
+    );
   }
   const articles = data.board;
-  console.log(123, articles);
 
   return (
     <div className="flex flex-col justify-center items-center gap-5 min-w-[300px] mx-[10vw] max-w-[900px]">

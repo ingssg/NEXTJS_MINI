@@ -1,85 +1,81 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import React, { useEffect } from "react";
-import { Formik, Form, Field } from "formik";
-import { useRouter } from "next/navigation";
-import instance from "@/api/axios";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { postContentState, isAutoSaveState, autoSavePostContentState } from "@/store/article";
+import React, {useState} from 'react';
+import { Formik, Form, Field } from 'formik'
+import instance from '@/api/axios'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link';
+import { useFetchData } from '@/api/hooks';
 
-type Props = {};
+type Props = {
+  params: {
+    articleID: string;
+  }
+}
 
-interface Values {
+type Values = {
   title: string;
   content: string;
 }
 
-const Post = (props: Props) => {
-  const [postContent, setPostContent] = useRecoilState(postContentState);
-  const [, setIsAutoSave] = useRecoilState(isAutoSaveState);
-  const autoSavePostContent = useRecoilValue(autoSavePostContentState);
+const EditArticle = (props: Props) => {
+  const router = useRouter();
+  const { data, loading, error } = useFetchData<Values>(`/api/board/${props.params.articleID}`);
+  if (loading) {
+    return <span className="loader"></span>;
+  }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setPostContent((prev) => ({ ...prev, [name]: value }));
-  };
+  if (error || !data) {
+    router.push("/error");
+    return;
+  }
 
   const style =
-    "border-[1px] border-[#606067] rounded-[5px] bg-[#27272a] h-[4vh] font-bold text-[1rem] sm:text-[1.5rem] p-2 font-[sans-serif]";
-  const router = useRouter();
+    "border-[1px] border-[#606067] rounded-[5px] bg-[#27272a] h-[4vh] font-bold text-[14px] sm:text-[18px] p-2 font-[sans-serif]";
 
   const Swal = require("sweetalert2");
 
   const handleSubmit = async (data: Values) => {
     try {
-      await instance.post("/api/board", data);
-      setPostContent({ title: "", content: "" });
+      await instance.put(`/api/board/${props.params.articleID}`, data);
       router.push("/articles");
     } catch (error) {
       console.error("게시글 추가 중 에러 발생:", error);
     }
   };
 
-  useEffect(() => {
-    setIsAutoSave(true);
-    return () => setIsAutoSave(false);
-  }, []); 
-
   return (
     <div className="flex flex-col">
       <Formik
-        initialValues={{
-          title: postContent.title,
-          content: postContent.content,
-        }}
+        initialValues={{ title: data.title, content: data.content}}
         onSubmit={async (data: Values, { setSubmitting }) => {
-          if (data.title.length === 0 || data.content.length === 0) {
+          if(data.title.length === 0 || data.content.length === 0) {
             Swal.fire({
-              title: "Error!",
-              text: "제목과 내용을 입력해주세요.",
-              icon: "error",
-              confirmButtonText: "확인",
+              title: 'Error!',
+              text: '제목과 내용을 입력해주세요.',
+              icon: 'error',
+              confirmButtonText: '확인',
               background: '#27272a',
               color: '#ffffff'
-            });
+            })
             return;
-          } else if (data.title.length < 10) {
+          }
+
+          else if(data.title.length < 10) {
             Swal.fire({
-              title: "Error!",
-              text: "제목은 10자 이상이어야 합니다.",
-              icon: "error",
-              confirmButtonText: "확인",
+              title: 'Error!',
+              text: '제목은 10자 이상이어야 합니다.',
+              icon: 'error',
+              confirmButtonText: '확인',
               background: '#27272a',
               color: '#ffffff'
-            });
+            })
             return;
           }
           await handleSubmit(data);
           setSubmitting(false);
         }}
+        validateOnChange={false}
       >
         <Form>
           <div className="w-screen flex justify-center">
@@ -91,7 +87,6 @@ const Post = (props: Props) => {
                   type="text"
                   placeholder="글 제목을 입력해주세요."
                   className={style}
-                  onKeyUp={handleInputChange}
                 />
                 <Field
                   id="content"
@@ -99,8 +94,7 @@ const Post = (props: Props) => {
                   as="textarea"
                   type="text"
                   placeholder="내용을 입력해 주세요."
-                  className="border-[1px] border-[#606067] rounded-[5px] bg-[#27272a] p-2 h-[40vh] text-[0.8rem] sm:text-[1rem] font-[sans-serif]"
-                  onKeyUp={handleInputChange}
+                  className="border-[1px] border-[#606067] rounded-[5px] bg-[#27272a] p-2 h-[40vh] text-[14px] sm:text-[18px] font-[sans-serif]"
                 />
               </div>
               <div className="flex gap-2 ml-auto">
@@ -123,6 +117,6 @@ const Post = (props: Props) => {
       </Formik>
     </div>
   );
-};
+}
 
-export default Post;
+export default EditArticle

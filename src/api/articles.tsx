@@ -8,9 +8,7 @@ type Articles = {
 };
 
 export const getArticles = () => {
-  console.log(123);
   const { data, loading, error } = useFetchData<Articles[]>("/api/board");
-  console.log(data,loading, error)
   if (loading) {
     return "loading";
   }
